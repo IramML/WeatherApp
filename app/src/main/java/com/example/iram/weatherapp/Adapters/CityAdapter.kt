@@ -2,6 +2,7 @@ package com.example.iram.weatherapp.Adapters
 
 import android.content.Context
 import android.content.Intent
+import android.support.v4.app.ListFragment
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,8 @@ class CityAdapter(var context: Context, items:ArrayList<City>): RecyclerView.Ada
         viewHolder.layout?.setOnClickListener {
             val intent=Intent(context, WeatherActivity::class.java)
             intent.putExtra("CITY",items?.get(position)?.nameCity)
+            if (!com.example.iram.weatherapp.Fragmets.ListFragment.switchF?.isChecked!!)
+                intent.putExtra("UNIT", "metric")
             context.startActivity(intent)
         }
     }

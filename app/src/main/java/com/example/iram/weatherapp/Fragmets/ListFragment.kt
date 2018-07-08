@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import com.example.iram.weatherapp.Adapters.City
 import com.example.iram.weatherapp.Adapters.CityAdapter
 import com.example.iram.weatherapp.R
@@ -19,8 +20,13 @@ class ListFragment : Fragment() {
     var citiesAdapter:CityAdapter?=null
     var listItems:RecyclerView?=null
     var layoutManager:RecyclerView.LayoutManager?=null
+
+    companion object {
+        var switchF:Switch?=null
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view0=inflater.inflate(R.layout.fragment_list, container, false)
+        switchF=view0?.findViewById(R.id.switchF)
         loadData()
         configureRecyclerView()
 
