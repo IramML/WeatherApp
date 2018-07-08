@@ -21,14 +21,18 @@ class ListFragment : Fragment() {
     var layoutManager:RecyclerView.LayoutManager?=null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view0=inflater.inflate(R.layout.fragment_list, container, false)
+        loadData()
+        configureRecyclerView()
+
+        return view0
+    }
+    private fun configureRecyclerView(){
         listItems=view0?.findViewById(R.id.listCities)
         listItems?.setHasFixedSize(true)
         layoutManager= LinearLayoutManager(view0?.context)
         listItems?.layoutManager=layoutManager
-        loadData()
         citiesAdapter=CityAdapter(view0?.context!!, listCities!!)
         listItems?.adapter=citiesAdapter
-        return view0
     }
     private fun loadData(){
         listCities= ArrayList()
