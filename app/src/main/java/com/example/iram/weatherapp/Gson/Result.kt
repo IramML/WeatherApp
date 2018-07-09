@@ -10,3 +10,19 @@ class Result(weather:ArrayList<Weather>, main:Main,  name:String){
         this.main=main
     }
 }
+class Main(temp:String){
+    var temp:String?=null
+    init {
+        this.temp=temp
+    }
+}
+class Weather(main:String, description:String, icon:String){
+    var main:String?=null
+    var description:String?=null
+    var icon:String?=null
+    init {
+        this.main=main
+        this.description=description
+        this.icon=icon
+    }
+}

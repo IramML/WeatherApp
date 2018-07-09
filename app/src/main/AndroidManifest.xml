@@ -52,7 +52,7 @@
 
         <activity
             android:name=".Activities.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps" android:parentActivityName=".Activities.ChooseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
