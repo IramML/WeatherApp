@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
-    var toolbar: Toolbar?=null
+    var toolbar:Toolbar?=null
     var switchF:Switch?=null
     //current location
     var callback: LocationCallback?=null
@@ -63,6 +63,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     private fun prepareMarkers(){
         mMap.setOnMapLongClickListener { location: LatLng? ->
+            Toast.makeText(this, location.toString(),Toast.LENGTH_SHORT).show()
             val intent=Intent(this, WeatherActivity::class.java)
             intent.putExtra("LAT", location?.latitude.toString())
             intent.putExtra("LON", location?.longitude.toString())

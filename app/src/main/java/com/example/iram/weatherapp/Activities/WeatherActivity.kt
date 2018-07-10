@@ -44,16 +44,14 @@ class WeatherActivity : AppCompatActivity() {
         tvDescription=findViewById(R.id.tvDescription)
 
         nameCity=intent.getStringExtra("CITY")
-
         if (nameCity!=null){
-            tvCity?.text=nameCity
             var unit:String?=intent.getStringExtra("UNIT")
             var url: String = "http://api.openweathermap.org/data/2.5/weather?q=$nameCity&appid=00be396ea806be96732f1beffcf2f828"
             if (unit!=null){
                 url+="&units=$unit"
                 metric=true
             }
-            getWeatherData(url)
+            getWeatherData(url, false)
         }else{
             var unit:String?=intent.getStringExtra("UNIT_MAP")
             lon=intent.getStringExtra("LON")
@@ -63,77 +61,60 @@ class WeatherActivity : AppCompatActivity() {
                 url+="&units=$unit"
                 metric=true
             }
-            getWeatherDataByLocation(url)
+            getWeatherData(url, true)
         }
-
-
-
     }
-    private fun getWeatherDataByLocation(url: String){
+    private fun getWeatherData(url:String, map:Boolean){
         val client=OkHttpClient()
         val request=okhttp3.Request.Builder().url(url).build()
         client.newCall(request).enqueue(object:okhttp3.Callback{
             override fun onResponse(call: Call?, response: Response?) {
                 val result=response?.body()?.string()
-
-                val gson= Gson()
-                val responseGson=gson.fromJson(result, com.example.iram.weatherapp.Gson.ResultMap::class.java)
-                this@WeatherActivity.runOnUiThread {
-
-                    if(responseGson.list!=null){
-                        Log.d("HTTPRESULT",result)
-                        tvCity?.text=responseGson.list?.get(0)!!.name
-                        if (metric){
-                            tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°C"
-                        }else{
-                            tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°F"
-                        }
-                        tvStatus?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.main
-                        tvDescription?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.description
-
-                        var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(0)!!.weather?.get(0)!!.icon}.png"
-                        Log.d("IMAGE", urlImg)
-                        Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
-                    }else{
-                        Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
-                    }
-
-
-
-                }
-            }
-            override fun onFailure(call: Call?, e: IOException?) {
-                Toast.makeText(applicationContext,"Error in HTTP request", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-    private fun getWeatherData(url:String){
-        val client=OkHttpClient()
-        val request=okhttp3.Request.Builder().url(url).build()
-        client.newCall(request).enqueue(object:okhttp3.Callback{
-            override fun onResponse(call: Call?, response: Response?) {
-                val result=response?.body()?.string()
-
                     val gson= Gson()
-                    val responseGson=gson.fromJson(result, com.example.iram.weatherapp.Gson.Result::class.java)
-                this@WeatherActivity.runOnUiThread {
-                    tvCity?.text=responseGson.name
-                    if (metric){
-                        tvTemperature?.text="${responseGson.main?.temp}°C"
+                    if (map){
+                        val responseGson = gson.fromJson(result, com.example.iram.weatherapp.Gson.ResultMap::class.java)
+                        this@WeatherActivity.runOnUiThread {
+
+                            if(responseGson.list!=null){
+                                Log.d("HTTPRESULT",result)
+                                tvCity?.text=responseGson.list?.get(0)!!.name
+                                if (metric){
+                                    tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°C"
+                                }else{
+                                    tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°F"
+                                }
+                                tvStatus?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.main
+                                tvDescription?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.description
+
+                                var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(0)!!.weather?.get(0)!!.icon}.png"
+                                Log.d("IMAGE", urlImg)
+                                Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                            }else{
+                                Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }else{
-                        tvTemperature?.text="${responseGson.main?.temp}°F"
+                        val responseGson = gson.fromJson(result, com.example.iram.weatherapp.Gson.Result::class.java)
+                        this@WeatherActivity.runOnUiThread {
+                            tvCity?.text=responseGson.name
+                            if (metric){
+                                tvTemperature?.text="${responseGson.main?.temp}°C"
+                            }else{
+                                tvTemperature?.text="${responseGson.main?.temp}°F"
+                            }
+
+                            tvStatus?.text=responseGson.weather?.get(0)!!.main
+                            tvDescription?.text=responseGson.weather?.get(0)!!.description
+
+                            var urlImg:String="http://openweathermap.org/img/w/${responseGson.weather?.get(0)!!.icon}.png"
+                            Log.d("IMAGE", urlImg)
+                            Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                        }
                     }
 
-                    tvStatus?.text=responseGson.weather?.get(0)!!.main
-                    tvDescription?.text=responseGson.weather?.get(0)!!.description
-
-                    var urlImg:String="http://openweathermap.org/img/w/${responseGson.weather?.get(0)!!.icon}.png"
-                    Log.d("IMAGE", urlImg)
-                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
-                }
             }
             override fun onFailure(call: Call?, e: IOException?) {
-                Toast.makeText(applicationContext,"Error in HTTP request", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"Error in request", Toast.LENGTH_SHORT).show()
             }
         })
     }
