@@ -79,19 +79,27 @@ class WeatherActivity : AppCompatActivity() {
                 val gson= Gson()
                 val responseGson=gson.fromJson(result, com.example.iram.weatherapp.Gson.ResultMap::class.java)
                 this@WeatherActivity.runOnUiThread {
-                    tvCity?.text=responseGson.list?.get(0)!!.name
-                    if (metric){
-                        tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°C"
+
+                    if(responseGson.list!=null){
+                        Log.d("HTTPRESULT",result)
+                        tvCity?.text=responseGson.list?.get(0)!!.name
+                        if (metric){
+                            tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°C"
+                        }else{
+                            tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°F"
+                        }
+                        tvStatus?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.main
+                        tvDescription?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.description
+
+                        var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(0)!!.weather?.get(0)!!.icon}.png"
+                        Log.d("IMAGE", urlImg)
+                        Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
                     }else{
-                        tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°F"
+                        Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
                     }
 
-                    tvStatus?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.main
-                    tvDescription?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.description
 
-                    var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(0)!!.weather?.get(0)!!.icon}.png"
-                    Log.d("IMAGE", urlImg)
-                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+
                 }
             }
             override fun onFailure(call: Call?, e: IOException?) {

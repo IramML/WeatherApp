@@ -31,7 +31,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:lines="1"
+        android:lines="2"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <TextView

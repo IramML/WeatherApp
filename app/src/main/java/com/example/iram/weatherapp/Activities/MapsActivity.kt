@@ -63,7 +63,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     private fun prepareMarkers(){
         mMap.setOnMapLongClickListener { location: LatLng? ->
-            Toast.makeText(this, location.toString(),Toast.LENGTH_SHORT).show()
             val intent=Intent(this, WeatherActivity::class.java)
             intent.putExtra("LAT", location?.latitude.toString())
             intent.putExtra("LON", location?.longitude.toString())

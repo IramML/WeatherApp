@@ -3,6 +3,7 @@ package com.example.iram.weatherapp.Adapters
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.ListFragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.example.iram.weatherapp.Activities.ChooseActivity
 import com.example.iram.weatherapp.Activities.WeatherActivity
+import com.example.iram.weatherapp.Network
 import com.example.iram.weatherapp.R
 
 class CityAdapter(var context: Context, items:ArrayList<City>): RecyclerView.Adapter<CityAdapter.ViewHolder>() {
@@ -28,11 +31,16 @@ class CityAdapter(var context: Context, items:ArrayList<City>): RecyclerView.Ada
         viewHolder.tvCity?.text=items?.get(position)?.nameCity
         viewHolder.tvCountry?.text=items?.get(position)?.nameCountry
         viewHolder.layout?.setOnClickListener {
-            val intent=Intent(context, WeatherActivity::class.java)
-            intent.putExtra("CITY",items?.get(position)?.nameCity)
-            if (!com.example.iram.weatherapp.Fragmets.ListFragment.switchF?.isChecked!!)
-                intent.putExtra("UNIT", "metric")
-            context.startActivity(intent)
+            if(Network.verifyAvailableNetwork(context)){
+                val intent=Intent(context, WeatherActivity::class.java)
+                intent.putExtra("CITY",items?.get(position)?.nameCity)
+                if (!com.example.iram.weatherapp.Fragmets.ListFragment.switchF?.isChecked!!)
+                    intent.putExtra("UNIT", "metric")
+                context.startActivity(intent)
+            }else{
+                Toast.makeText(context, "Internet connection no available", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
     override fun getItemCount(): Int {
