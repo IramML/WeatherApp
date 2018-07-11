@@ -1,9 +1,12 @@
 package com.example.iram.weatherapp.Activities
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +19,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class WeatherActivity : AppCompatActivity() {
+    var context:Context=this
     var nameCity:String?=null
     var lat:String?=null
     var lon:String?=null
@@ -76,19 +80,36 @@ class WeatherActivity : AppCompatActivity() {
                         this@WeatherActivity.runOnUiThread {
 
                             if(responseGson.list!=null){
-                                Log.d("HTTPRESULT",result)
-                                tvCity?.text=responseGson.list?.get(0)!!.name
-                                if (metric){
-                                    tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°C"
-                                }else{
-                                    tvTemperature?.text="${responseGson.list?.get(0)!!.main?.temp}°F"
+                                val builder= AlertDialog.Builder(context)
+                                builder.setTitle("Select location")
+                                val adaptadorDialogo= ArrayAdapter<String>(context, android.R.layout.simple_selectable_list_item)
+                                for (nameLocation in responseGson.list!!){
+                                    adaptadorDialogo.add(nameLocation.name)
                                 }
-                                tvStatus?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.main
-                                tvDescription?.text=responseGson.list?.get(0)!!.weather?.get(0)!!.description
+                                builder.setAdapter(adaptadorDialogo){
+                                    dialog, which->
+                                    /*fotoIndex=which
+                                    foto?.setImageResource(obtenerFoto(fotoIndex))*/
+                                    tvCity?.text=responseGson.list?.get(which)!!.name
+                                    if (metric){
+                                        tvTemperature?.text="${responseGson.list?.get(which)!!.main?.temp}°C"
+                                    }else{
+                                        tvTemperature?.text="${responseGson.list?.get(which)!!.main?.temp}°F"
+                                    }
+                                    tvStatus?.text=responseGson.list?.get(which)!!.weather?.get(0)!!.main
+                                    tvDescription?.text=responseGson.list?.get(which)!!.weather?.get(0)!!.description
 
-                                var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(0)!!.weather?.get(0)!!.icon}.png"
-                                Log.d("IMAGE", urlImg)
-                                Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                                    var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(which)!!.weather?.get(0)!!.icon}.png"
+                                    Log.d("IMAGE", urlImg)
+                                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                                }
+                                builder.setNegativeButton("Cancel"){
+                                    dialog, which->
+                                    dialog.dismiss()
+                                }
+                                builder.setCancelable(false)
+                                builder.show()
+                                Log.d("HTTPRESULT",result)
                             }else{
                                 Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
                             }
