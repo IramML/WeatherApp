@@ -30,7 +30,11 @@ class WeatherActivity : AppCompatActivity() {
     var tvTemperature:TextView?=null
     var tvStatus:TextView?=null
     var tvDescription:TextView?=null
+    var tvTempMin:TextView?=null
+    var tvTempMax:TextView?=null
     var metric=false
+    var map:Boolean=false
+    var unit:String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
@@ -46,27 +50,26 @@ class WeatherActivity : AppCompatActivity() {
         tvStatus=findViewById(R.id.tvStatus)
         tvTemperature=findViewById(R.id.tvTemperature)
         tvDescription=findViewById(R.id.tvDescription)
+        tvTempMax=findViewById(R.id.tvTempMax)
+        tvTempMin=findViewById(R.id.tvTempMin)
 
         nameCity=intent.getStringExtra("CITY")
+        var url:String?="http://api.openweathermap.org/data/2.5/"
         if (nameCity!=null){
-            var unit:String?=intent.getStringExtra("UNIT")
-            var url: String = "http://api.openweathermap.org/data/2.5/weather?q=$nameCity&appid=00be396ea806be96732f1beffcf2f828"
-            if (unit!=null){
-                url+="&units=$unit"
-                metric=true
-            }
-            getWeatherData(url, false)
+            url+="weather?q=$nameCity"
+            map=false
         }else{
-            var unit:String?=intent.getStringExtra("UNIT_MAP")
             lon=intent.getStringExtra("LON")
             lat=intent.getStringExtra("LAT")
-            var url:String="http://api.openweathermap.org/data/2.5/find?lat=$lat&lon=$lon&appid=00be396ea806be96732f1beffcf2f828"
-            if (unit!=null){
-                url+="&units=$unit"
-                metric=true
-            }
-            getWeatherData(url, true)
+            url+="find?lat=$lat&lon=$lon"
+            map=true
         }
+        unit=intent.getStringExtra("UNIT")
+        if (unit!=null){
+            url+="&units=$unit"
+            metric=true
+        }
+        getWeatherData(url+"&appid=00be396ea806be96732f1beffcf2f828", map)
     }
     private fun getWeatherData(url:String, map:Boolean){
         val client=OkHttpClient()
@@ -88,20 +91,9 @@ class WeatherActivity : AppCompatActivity() {
                                 }
                                 builder.setAdapter(adaptadorDialogo){
                                     dialog, which->
-                                    /*fotoIndex=which
-                                    foto?.setImageResource(obtenerFoto(fotoIndex))*/
-                                    tvCity?.text=responseGson.list?.get(which)!!.name
-                                    if (metric){
-                                        tvTemperature?.text="${responseGson.list?.get(which)!!.main?.temp}°C"
-                                    }else{
-                                        tvTemperature?.text="${responseGson.list?.get(which)!!.main?.temp}°F"
-                                    }
-                                    tvStatus?.text=responseGson.list?.get(which)!!.weather?.get(0)!!.main
-                                    tvDescription?.text=responseGson.list?.get(which)!!.weather?.get(0)!!.description
-
-                                    var urlImg:String="http://openweathermap.org/img/w/${responseGson.list?.get(which)!!.weather?.get(0)!!.icon}.png"
-                                    Log.d("IMAGE", urlImg)
-                                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                                    val urlWeather:String=if (metric) "http://api.openweathermap.org/data/2.5/weather?q=${responseGson.list?.get(which)!!.name}&appid=00be396ea806be96732f1beffcf2f828&units=$unit"
+                                    else "http://api.openweathermap.org/data/2.5/weather?q=${responseGson.list?.get(which)!!.name}&appid=00be396ea806be96732f1beffcf2f828"
+                                    getWeatherData(urlWeather, false)
                                 }
                                 builder.setNegativeButton("Cancel"){
                                     dialog, which->
@@ -119,14 +111,15 @@ class WeatherActivity : AppCompatActivity() {
                         this@WeatherActivity.runOnUiThread {
                             tvCity?.text=responseGson.name
                             if (metric){
-                                tvTemperature?.text="${responseGson.main?.temp}°C"
+                                tvTemperature?.text="Temperature: ${responseGson.main?.temp}°C"
                             }else{
-                                tvTemperature?.text="${responseGson.main?.temp}°F"
+                                tvTemperature?.text="Temperature:  ${responseGson.main?.temp}°F"
                             }
 
                             tvStatus?.text=responseGson.weather?.get(0)!!.main
-                            tvDescription?.text=responseGson.weather?.get(0)!!.description
-
+                            tvDescription?.text="Description: ${responseGson.weather?.get(0)!!.description}"
+                            tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}"
+                            tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}"
                             var urlImg:String="http://openweathermap.org/img/w/${responseGson.weather?.get(0)!!.icon}.png"
                             Log.d("IMAGE", urlImg)
                             Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)

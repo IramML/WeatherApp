@@ -68,7 +68,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             intent.putExtra("LAT", location?.latitude.toString())
             intent.putExtra("LON", location?.longitude.toString())
             if (!switchF?.isChecked!!)
-                intent.putExtra("UNIT_MAP", "metric")
+                intent.putExtra("UNIT", "metric")
             startActivity(intent)
         }
 

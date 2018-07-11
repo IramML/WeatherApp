@@ -10,10 +10,14 @@ class Result(weather:ArrayList<Weather>, main:Main,  name:String){
         this.main=main
     }
 }
-class Main(temp:String){
+class Main(temp:String, temp_min:String, temp_max: String){
     var temp:String?=null
+    var temp_min:String?=null
+    var temp_max:String?=null
     init {
         this.temp=temp
+        this.temp_max=temp_max
+        this.temp_min=temp_min
     }
 }
 class Weather(main:String, description:String, icon:String){
