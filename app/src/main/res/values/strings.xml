@@ -4,4 +4,63 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+    <string-array name="nameCitiesMexico">
+        <item>Durango, Durango</item>
+        <item>Álvaro Obregón, Ciudad de México</item>
+        <item>Álvaro Obregón, Ciudad de México</item>
+        <item>Saltillo, Coahuila</item>
+        <item>Guadalajara, Jalisco</item>
+        <item>Chihuahua, Chihuahua</item>
+        <item>Torreón, Coahuila</item>
+        <item>Piedras negras, Coahuila</item>
+        <item>Parras de la Fuente, Coahuila</item>
+        <item>San Pedro, Coahuila</item>
+        <item>Monclova, Coahuila</item>
+        <item>Acuña, Coahuila</item>
+        <item>Allende, Coahuila</item>
+        <item>Arteaga, Coahuila</item>
+        <item>Candela, Coahuila</item>
+        <item>Castaños, Coahuila</item>
+        <item>Cuatrociénegas, Coahuila</item>
+        <item>Escobedo, Coahuila</item>
+        <item>Francisco I. Madero, Coahuila</item>
+        <item>Frontera, Coahuila</item>
+        <item>General Cepeda, Coahuila</item>
+        <item>Guerrero, Coahuila</item>
+        <item>Hidalgo, Coahuila</item>
+        <item>Jiménez, Coahuila</item>
+        <item>Juárez, Coahuila</item>
+        <item>Lamadrid, Coahuila</item>
+        <item>Matamoros, Coahuila</item>
+        <item>Morelos, Coahuila</item>
+        <item>Múzquiz, Coahuila</item>
+        <item>Nadadores, Coahuila</item>
+        <item>Nava, Coahuila</item>
+        <item>Ocampo, Coahuila</item>
+        <item>Progreso, Coahuila</item>
+        <item>Ramoz Arizpe, Coahuila</item>
+        <item>Sabinas, Coahuila</item>
+        <item>Sacramento, Coahuila</item>
+        <item>San Buenaventura, Coahuila</item>
+        <item>San Juan de Sabinas, Coahuila</item>
+        <item>Sierra Mojada, Coahuila</item>
+        <item>Viesca, Coahuila</item>
+        <item>Villa Unión, Coahuila</item>
+        <item>Zaragoza, Coahuila</item>
+        <item>Azcapotzalco, Ciudad de México</item>
+        <item>Benito Juárez, Ciudad de México</item>
+        <item>Coyoacán, Ciudad de México</item>
+        <item>Cuajimalpa de Morelos, Ciudad de México</item>
+        <item>Cuauhtémoc, Ciudad de México</item>
+        <item>Gustavo A. Madero, Ciudad de México</item>
+        <item>Iztacalco, Ciudad de México</item>
+        <item>Iztapalapa, Ciudad de México</item>
+        <item>Magdalena Contreras, Ciudad de México</item>
+        <item>Miguel Hidalgo, Ciudad de México</item>
+        <item>Milpa Alta, Ciudad de México</item>
+        <item>Tláhuac, Ciudad de México</item>
+        <item>Tlalpan, Ciudad de México</item>
+        <item>Venustiano Carranza, Ciudad de México</item>
+        <item>Xochimilco, Ciudad de México</item>
+    </string-array>
 </resources>

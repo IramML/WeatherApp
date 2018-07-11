@@ -66,12 +66,11 @@ class ListFragment : Fragment() {
     }
     private fun loadData(){
         listCities= ArrayList()
-        listCities?.add(City("Durango, MX", "México"))
-        listCities?.add(City("Mexico City, MX", "México"))
-        listCities?.add(City("Saltillo, MX", "México"))
-        listCities?.add(City("Guadalajara, MX", "México"))
-        listCities?.add(City("Chihuahua, MX", "México"))
-        listCities?.add(City("Torreón, MX", "México"))
+        val res = resources
+        val mexicoCities = res.getStringArray(R.array.nameCitiesMexico)
+        for (mxCities in mexicoCities){
+            listCities?.add(City(mxCities,"México"))
+        }
     }
 
 
