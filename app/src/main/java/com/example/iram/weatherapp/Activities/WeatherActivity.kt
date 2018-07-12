@@ -112,14 +112,17 @@ class WeatherActivity : AppCompatActivity() {
                             tvCity?.text=responseGson.name
                             if (metric){
                                 tvTemperature?.text="Temperature: ${responseGson.main?.temp}°C"
+                                tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}°C"
+                                tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}°C"
                             }else{
                                 tvTemperature?.text="Temperature:  ${responseGson.main?.temp}°F"
+                                tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}°F"
+                                tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}°F"
                             }
 
                             tvStatus?.text=responseGson.weather?.get(0)!!.main
                             tvDescription?.text="Description: ${responseGson.weather?.get(0)!!.description}"
-                            tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}"
-                            tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}"
+
                             var urlImg:String="http://openweathermap.org/img/w/${responseGson.weather?.get(0)!!.icon}.png"
                             Log.d("IMAGE", urlImg)
                             Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
