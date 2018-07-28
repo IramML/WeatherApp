@@ -3,26 +3,30 @@ package com.example.iram.weatherapp.Activities
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ListFragment
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Switch
 import android.widget.Toast
 import com.example.iram.weatherapp.Interfaces.Search
-import com.example.iram.weatherapp.Network
+import com.example.iram.weatherapp.Interfaces.locationListener
 import com.example.iram.weatherapp.R
+import com.example.iram.weatherapp.Util.Location
+import com.google.android.gms.location.LocationResult
 
 class ChooseActivity : AppCompatActivity(), Search {
-
+    var location: Location?=null
+    companion object {
+        var sMetric:Switch?=null
+    }
+    var toolbar:Toolbar?=null
     override fun sendData(text: String, submit:Boolean) {
         com.example.iram.weatherapp.Fragmets.ListFragment.receiveData(text, submit)
     }
-    var toolbar:Toolbar?=null
-
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose)
+        sMetric=findViewById(R.id.sMetric)
         toolbar=findViewById(R.id.actionBarChoose)
         toolbar?.setTitle(R.string.app_name)
         setSupportActionBar(toolbar)
@@ -59,18 +63,33 @@ class ChooseActivity : AppCompatActivity(), Search {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.icMap->{
-                if(Network.verifyAvailableNetwork(this)){
-                    val intent =Intent(this, MapsActivity::class.java)
-                    startActivity(intent)
-                }else{
-                    Toast.makeText(this, "Internet connection no available", Toast.LENGTH_SHORT).show()
-                }
+                val intent =Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.icLocation->{
+                location?.inicializeLocation()
+                location= Location(this, object:locationListener{
+                    override fun locationResponse(locationResult: LocationResult) {
+                        val lat=locationResult.lastLocation.latitude.toString()
+                        val lng=locationResult.lastLocation.longitude.toString()
+                        val intent=Intent(applicationContext, WeatherActivity::class.java)
+                        intent.putExtra("LAT", lat)
+                        intent.putExtra("LON", lng)
+                        startActivity(intent)
+                    }
+                })
                 return true
             }
             else ->return super.onOptionsItemSelected(item)
-
         }
-
+    }
+    override fun onPause() {
+        super.onPause()
+        location?.stopUpdateLocation()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        location?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }

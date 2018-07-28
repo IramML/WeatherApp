@@ -1,25 +1,22 @@
 package com.example.iram.weatherapp.Activities
 
-import android.content.Context
+
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.iram.weatherapp.Interfaces.weatherByLocationInterface
+import com.example.iram.weatherapp.Interfaces.weatherByNameInterface
+import com.example.iram.weatherapp.OpenWeatherMap.openWeatherMap
+import com.example.iram.weatherapp.OpenWeatherMap.openWeatherMapAPILocation
+import com.example.iram.weatherapp.OpenWeatherMap.openWeatherMapAPIName
 import com.example.iram.weatherapp.R
-import com.google.gson.Gson
-import okhttp3.Call
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import java.io.IOException
+import android.widget.*
+
 
 class WeatherActivity : AppCompatActivity() {
-    var context:Context=this
     var nameCity:String?=null
     var lat:String?=null
     var lon:String?=null
@@ -32,19 +29,31 @@ class WeatherActivity : AppCompatActivity() {
     var tvDescription:TextView?=null
     var tvTempMin:TextView?=null
     var tvTempMax:TextView?=null
-    var metric=false
-    var map:Boolean=false
+
     var unit:String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
+        initViews()
+        initToolbar()
+        getExtras()
+        if(nameCity!=null){
+            getWeatherData(nameCity!!, unit!!)
+        }else{
+            getWeatherByLocation(lat!!, lon!!)
+        }
+    }
+    private fun getExtras() {
+        nameCity=intent.getStringExtra("CITY")
+        lon=intent.getStringExtra("LON")
+        lat=intent.getStringExtra("LAT")
+        unit=intent.getStringExtra("UNIT")
+        if (unit!=null) unit="&units=$unit"
+        else unit=""
 
-        toolbar=findViewById(R.id.actionBarWeather)
-        toolbar?.setTitle(R.string.app_name)
-        setSupportActionBar(toolbar)
-        var actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
+    private fun initViews() {
         ivStatus=findViewById(R.id.ivStatus)
         tvCity=findViewById(R.id.tvCity)
         tvStatus=findViewById(R.id.tvStatus)
@@ -52,87 +61,72 @@ class WeatherActivity : AppCompatActivity() {
         tvDescription=findViewById(R.id.tvDescription)
         tvTempMax=findViewById(R.id.tvTempMax)
         tvTempMin=findViewById(R.id.tvTempMin)
-
-        nameCity=intent.getStringExtra("CITY")
-        var url:String?="http://api.openweathermap.org/data/2.5/"
-        if (nameCity!=null){
-            url+="weather?q=$nameCity"
-            map=false
-        }else{
-            lon=intent.getStringExtra("LON")
-            lat=intent.getStringExtra("LAT")
-            url+="find?lat=$lat&lon=$lon"
-            map=true
-        }
-        unit=intent.getStringExtra("UNIT")
-        if (unit!=null){
-            url+="&units=$unit"
-            metric=true
-        }
-        getWeatherData(url+"&appid=00be396ea806be96732f1beffcf2f828", map)
     }
-    private fun getWeatherData(url:String, map:Boolean){
-        val client=OkHttpClient()
-        val request=okhttp3.Request.Builder().url(url).build()
-        client.newCall(request).enqueue(object:okhttp3.Callback{
-            override fun onResponse(call: Call?, response: Response?) {
-                val result=response?.body()?.string()
-                    val gson= Gson()
-                    if (map){
-                        val responseGson = gson.fromJson(result, com.example.iram.weatherapp.Gson.ResultMap::class.java)
-                        this@WeatherActivity.runOnUiThread {
+    private fun initToolbar() {
+        toolbar=findViewById(R.id.actionBarWeather)
+        toolbar?.setTitle(R.string.app_name)
+        setSupportActionBar(toolbar)
+        var actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
-                            if(responseGson.list!=null){
-                                val builder= AlertDialog.Builder(context)
-                                builder.setTitle("Select location")
-                                val adaptadorDialogo= ArrayAdapter<String>(context, android.R.layout.simple_selectable_list_item)
-                                for (nameLocation in responseGson.list!!){
-                                    adaptadorDialogo.add(nameLocation.name)
-                                }
-                                builder.setAdapter(adaptadorDialogo){
-                                    dialog, which->
-                                    val urlWeather:String=if (metric) "http://api.openweathermap.org/data/2.5/weather?q=${responseGson.list?.get(which)!!.name}&appid=00be396ea806be96732f1beffcf2f828&units=$unit"
-                                    else "http://api.openweathermap.org/data/2.5/weather?q=${responseGson.list?.get(which)!!.name}&appid=00be396ea806be96732f1beffcf2f828"
-                                    getWeatherData(urlWeather, false)
-                                }
-                                builder.setNegativeButton("Cancel"){
-                                    dialog, which->
-                                    dialog.dismiss()
-                                }
-                                builder.setCancelable(false)
-                                builder.show()
-                                Log.d("HTTPRESULT",result)
-                            }else{
-                                Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
-                            }
+    private fun getWeatherData(nameCity:String, unit:String){
+        val openWeatherMap=openWeatherMap(this)
+        openWeatherMap.getWeatherByName(nameCity, unit, object:weatherByNameInterface{
+            override fun getWeatherByName(result: openWeatherMapAPIName) {
+                this@WeatherActivity.runOnUiThread {
+                    tvDescription?.text=result.weather?.get(0)?.description!!
+                    tvCity?.text=result.name
+                    val m=if (!unit.isNullOrEmpty())"°C" else "°F"
+
+                    tvTemperature?.text="Temperature: ${result.main?.temp}$m"
+                    tvTempMax?.text="Temp max: ${result.main?.temp_max}$m"
+                    tvTempMin?.text="Temp min: ${result.main?.temp_min}$m"
+
+                    tvStatus?.text=result.weather?.get(0)!!.main
+                    tvDescription?.text="Description: ${result.weather?.get(0)!!.description}"
+
+                    var urlImg:String="http://openweathermap.org/img/w/${result.weather?.get(0)!!.icon}.png"
+                    Log.d("IMAGE", urlImg)
+                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                }
+            }
+        })
+    }
+    private fun getWeatherByLocation(lat:String, lon:String){
+        val openWeatherMap=openWeatherMap(this)
+        openWeatherMap.getWeatherByLocation(lat, lon, object:weatherByLocationInterface{
+            override fun getWeatherByLocation(result: openWeatherMapAPILocation) {
+                this@WeatherActivity.runOnUiThread {
+                    if(result.list!=null){
+                        val sMetric=android.widget.Switch(this@WeatherActivity)
+                        sMetric.text="°F"
+
+                        val builder= AlertDialog.Builder(this@WeatherActivity).setView(sMetric)
+                        builder.setTitle("Select location")
+                        val adaptadorDialogo= ArrayAdapter<String>(this@WeatherActivity, android.R.layout.simple_selectable_list_item)
+                        for (nameLocation in result.list!!){
+                            adaptadorDialogo.add(nameLocation.name)
                         }
+                        builder.setAdapter(adaptadorDialogo){
+                            dialog, which->
+                            getWeatherData(result.list?.get(which)?.name!!,
+                                    if (sMetric.isChecked)"" else "&units=metric")
+                        }
+                        builder.setNegativeButton("Cancel"){
+                            dialog, which->
+                            finish()
+                            dialog.dismiss()
+                        }
+                        builder.setCancelable(false)
+                        builder.show()
                     }else{
-                        val responseGson = gson.fromJson(result, com.example.iram.weatherapp.Gson.Result::class.java)
-                        this@WeatherActivity.runOnUiThread {
-                            tvCity?.text=responseGson.name
-                            if (metric){
-                                tvTemperature?.text="Temperature: ${responseGson.main?.temp}°C"
-                                tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}°C"
-                                tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}°C"
-                            }else{
-                                tvTemperature?.text="Temperature:  ${responseGson.main?.temp}°F"
-                                tvTempMax?.text="Temp max: ${responseGson.main?.temp_max}°F"
-                                tvTempMin?.text="Temp min: ${responseGson.main?.temp_min}°F"
-                            }
-
-                            tvStatus?.text=responseGson.weather?.get(0)!!.main
-                            tvDescription?.text="Description: ${responseGson.weather?.get(0)!!.description}"
-
-                            var urlImg:String="http://openweathermap.org/img/w/${responseGson.weather?.get(0)!!.icon}.png"
-                            Log.d("IMAGE", urlImg)
-                            Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
-                        }
+                        Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
+                }
+            }
 
-            }
-            override fun onFailure(call: Call?, e: IOException?) {
-                Toast.makeText(applicationContext,"Error in request", Toast.LENGTH_SHORT).show()
-            }
         })
     }
 }

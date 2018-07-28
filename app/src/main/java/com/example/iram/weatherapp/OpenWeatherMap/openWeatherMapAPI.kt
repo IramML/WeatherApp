@@ -1,9 +1,9 @@
-package com.example.iram.weatherapp.Gson
+package com.example.iram.weatherapp.OpenWeatherMap
 
-class Result(weather:ArrayList<Weather>, main:Main,  name:String){
+class openWeatherMapAPIName(weather:ArrayList<Weather>, main:Main,  name:String){
     var name:String?=null
     var weather:ArrayList<Weather>?=null
-    var main:Main?=null
+    var main: Main?=null
     init {
         this.name=name
         this.weather=weather
@@ -28,5 +28,21 @@ class Weather(main:String, description:String, icon:String){
         this.main=main
         this.description=description
         this.icon=icon
+    }
+}
+class openWeatherMapAPILocation(list:ArrayList<List>){
+    var list:ArrayList<List>?=null
+    init {
+        this.list=list
+    }
+}
+class List(name:String, main: Main, weather:ArrayList<Weather>){
+    var name:String?=null
+    var main:Main?=null
+    var weather:ArrayList<Weather>?=null
+    init {
+        this.name=name
+        this.main=main
+        this.weather=weather
     }
 }

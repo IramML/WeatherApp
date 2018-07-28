@@ -11,6 +11,11 @@
     <item
         android:id="@+id/icMap"
         android:icon="@drawable/icon_map"
-        android:title="Item"
+        android:title="Map"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/icLocation"
+        android:icon="@drawable/icon_location"
+        android:title="My location"
         app:showAsAction="ifRoom" />
 </menu>

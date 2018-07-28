@@ -10,12 +10,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
-import android.widget.Toast
 import com.example.iram.weatherapp.Activities.WeatherActivity
 import com.example.iram.weatherapp.Adapters.City
 import com.example.iram.weatherapp.Adapters.CityAdapter
-import com.example.iram.weatherapp.Network
+import com.example.iram.weatherapp.Interfaces.ClickListener
 import com.example.iram.weatherapp.R
 
 
@@ -27,7 +25,6 @@ class ListFragment : Fragment() {
     companion object {
         var view0:View?=null
         var citiesAdapter:CityAdapter?=null
-        var switchF:Switch?=null
         fun receiveData(query:String, submit:Boolean){
             if (submit){
                 goWeatherResult(query, view0?.context!!)
@@ -37,20 +34,13 @@ class ListFragment : Fragment() {
 
         }
         fun goWeatherResult(cityName:String, context: Context){
-            if(Network.verifyAvailableNetwork(context)){
                 val intent= Intent(context, WeatherActivity::class.java)
                 intent.putExtra("CITY", cityName)
-                if (!com.example.iram.weatherapp.Fragmets.ListFragment.switchF?.isChecked!!)
-                    intent.putExtra("UNIT", "metric")
                 context.startActivity(intent)
-            }else{
-                Toast.makeText(context, "Internet connection no available", Toast.LENGTH_SHORT).show()
-            }
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view0=inflater.inflate(R.layout.fragment_list, container, false)
-        switchF=view0?.findViewById(R.id.switchF)
         loadData()
         configureRecyclerView()
 
@@ -61,7 +51,11 @@ class ListFragment : Fragment() {
         listItems?.setHasFixedSize(true)
         layoutManager= LinearLayoutManager(view0?.context)
         listItems?.layoutManager=layoutManager
-        citiesAdapter=CityAdapter(view0?.context!!, listCities!!)
+        citiesAdapter=CityAdapter(view0?.context!!, listCities!!, object:ClickListener{
+            override fun onClick(view: View, index: Int) {
+                   goWeatherResult(listCities?.get(index)?.nameCity!!, view0!!.context)
+            }
+        })
         listItems?.adapter=citiesAdapter
     }
     private fun loadData(){
