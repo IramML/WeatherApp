@@ -1,6 +1,7 @@
 package com.example.iram.weatherapp.OpenWeatherMap
 
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.example.iram.weatherapp.Interfaces.HttpResponse
 import com.example.iram.weatherapp.Interfaces.weatherByLocationInterface
 import com.example.iram.weatherapp.Interfaces.weatherByNameInterface
@@ -9,26 +10,36 @@ import com.google.gson.Gson
 import java.net.URLEncoder
 
 class openWeatherMap(var activity:AppCompatActivity){
-    private val URL_BASE="http://api.openweathermap.org/data/2.5/"
+    private val URL_BASE="http://api.openweathermap.org/"
+    private val VERSION="2.5/"
     private val API_ID="&appid=00be396ea806be96732f1beffcf2f828"
     fun getWeatherByName(name:String, unit:String, weatherByNameInterface:weatherByNameInterface){
         val network= Network(activity)
         val name=URLEncoder.encode(name, "UTF-8")
+        val section="data/"
         val method="weather?q=$name"
-        val url="$URL_BASE$method$API_ID$unit"
+        var url="$URL_BASE$section$VERSION$method$API_ID$unit"
         network.httpRequest(activity.applicationContext, url, object:HttpResponse{
             override fun httpResponseSuccess(response: String) {
                 var gson= Gson()
                 var objectResonse=gson.fromJson(response, openWeatherMapAPIName::class.java)
-
-                weatherByNameInterface.getWeatherByName(objectResonse)
+                val nameCity=objectResonse.name!!
+                val urlImage=makeIconURL(objectResonse.weather?.get(0)?.icon!!)
+                val status=objectResonse.weather?.get(0)?.main!!
+                val description=objectResonse.weather?.get(0)?.description!!
+                val temperature=objectResonse.main?.temp!!
+                val tempMin=objectResonse.main?.temp_min!!
+                val tempMax=objectResonse.main?.temp_max!!
+                weatherByNameInterface.getWeatherByName(nameCity, urlImage, status, description, temperature, tempMin, tempMax)
             }
         })
     }
     fun getWeatherByLocation(lat:String, lon:String, weatherByLocationInterface:weatherByLocationInterface){
         val network= Network(activity)
-        val method="find?lat=$lat&lon=$lon"
-        val url="$URL_BASE$method$API_ID"
+        val section="data/"
+        val method="find?"
+        val args="lat=$lat&lon=$lon"
+        val url="$URL_BASE$section$VERSION$method$args$API_ID"
         network.httpRequest(activity.applicationContext, url, object:HttpResponse{
             override fun httpResponseSuccess(response: String) {
                 var gson= Gson()
@@ -36,5 +47,10 @@ class openWeatherMap(var activity:AppCompatActivity){
                 weatherByLocationInterface.getWeatherByLocation(objectResonse)
             }
         })
+    }
+    private fun makeIconURL(icon:String):String{
+        val secion="img/w/"
+        val url="$URL_BASE$secion$icon.png"
+        return url
     }
 }

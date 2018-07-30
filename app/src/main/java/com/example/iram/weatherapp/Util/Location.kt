@@ -40,6 +40,9 @@ class Location(var activity: AppCompatActivity, locationListener: locationListen
         locationRequest?.fastestInterval=5000
         locationRequest?.priority=LocationRequest.PRIORITY_HIGH_ACCURACY
     }
+    private fun inizializLocationRequest(){
+        locationRequest=LocationRequest()
+    }
     private fun validatePermissionsLocation():Boolean{
         val fineLocationAvailable= ActivityCompat.checkSelfPermission(activity.applicationContext, permissionFineLocation)==PackageManager.PERMISSION_GRANTED
         val coarseLocationAvailable=ActivityCompat.checkSelfPermission(activity.applicationContext, permissionFineLocation)==PackageManager.PERMISSION_GRANTED

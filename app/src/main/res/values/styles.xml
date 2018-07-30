@@ -3,9 +3,14 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
     </style>
-
+    <style name="ToolbarCustom" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:popupTheme">@style/Theme.AppCompat.Light</item>
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:elevation">4dp</item>
+        <item name="titleTextColor">@color/toolbar_text_color</item>
+    </style>
 </resources>

@@ -3,4 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="primaryColor">#f9f9f9</color>
+    <color name="primaryLightColor">#ffffff</color>
+    <color name="primaryDarkColor">#c6c6c6</color>
+    <color name="secondaryColor">#536dfe</color>
+    <color name="secondaryLightColor">#8f9bff</color>
+    <color name="secondaryDarkColor">#0043ca</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#000000</color>
+    <color name="icon_color">#000</color>
+    <color name="toolbar_text_color">#000</color>
 </resources>

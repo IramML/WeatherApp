@@ -25,7 +25,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var location: Location?=null
     private lateinit var mMap: GoogleMap
     var toolbar:Toolbar?=null
-    var switchF:Switch?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +35,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setSupportActionBar(toolbar)
         var actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        switchF=findViewById(R.id.sMetric)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)

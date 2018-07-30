@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.iram.weatherapp.Activities.ChooseActivity
 import com.example.iram.weatherapp.Activities.WeatherActivity
 import com.example.iram.weatherapp.Adapters.City
 import com.example.iram.weatherapp.Adapters.CityAdapter

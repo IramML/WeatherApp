@@ -10,16 +10,7 @@
         android:id="@+id/actionBarChoose"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        app:titleTextColor="@android:color/white"/>
-    <Switch
-        android:id="@+id/sMetric"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="°F"
-        />
+        style="@style/ToolbarCustom"/>
     <fragment
         android:id="@+id/fragment"
         android:layout_width="match_parent"

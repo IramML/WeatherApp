@@ -16,9 +16,8 @@ import com.google.android.gms.location.LocationResult
 
 class ChooseActivity : AppCompatActivity(), Search {
     var location: Location?=null
-    companion object {
-        var sMetric:Switch?=null
-    }
+    var lat=""
+    var lng=""
     var toolbar:Toolbar?=null
     override fun sendData(text: String, submit:Boolean) {
         com.example.iram.weatherapp.Fragmets.ListFragment.receiveData(text, submit)
@@ -26,10 +25,16 @@ class ChooseActivity : AppCompatActivity(), Search {
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose)
-        sMetric=findViewById(R.id.sMetric)
         toolbar=findViewById(R.id.actionBarChoose)
         toolbar?.setTitle(R.string.app_name)
         setSupportActionBar(toolbar)
+        location= Location(this, object:locationListener{
+            override fun locationResponse(locationResult: LocationResult) {
+                lat=locationResult.lastLocation.latitude.toString()
+                lng=locationResult.lastLocation.longitude.toString()
+                location?.stopUpdateLocation()
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -68,21 +73,24 @@ class ChooseActivity : AppCompatActivity(), Search {
                 return true
             }
             R.id.icLocation->{
-                location?.inicializeLocation()
-                location= Location(this, object:locationListener{
-                    override fun locationResponse(locationResult: LocationResult) {
-                        val lat=locationResult.lastLocation.latitude.toString()
-                        val lng=locationResult.lastLocation.longitude.toString()
-                        val intent=Intent(applicationContext, WeatherActivity::class.java)
-                        intent.putExtra("LAT", lat)
-                        intent.putExtra("LON", lng)
-                        startActivity(intent)
-                    }
-                })
+                if (!lat.isNullOrEmpty() && !lng.isNullOrEmpty()){
+                    val intent=Intent(applicationContext, WeatherActivity::class.java)
+                    intent.putExtra("LAT", lat)
+                    intent.putExtra("LON", lng)
+                    startActivity(intent)
+                }else{
+                    Toast.makeText(applicationContext, "Without location", Toast.LENGTH_SHORT).show()
+                }
+
                 return true
             }
             else ->return super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        location?.inicializeLocation()
     }
     override fun onPause() {
         super.onPause()

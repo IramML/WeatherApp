@@ -20,6 +20,7 @@ class WeatherActivity : AppCompatActivity() {
     var nameCity:String?=null
     var lat:String?=null
     var lon:String?=null
+    var unit:String?=null
 
     var toolbar:Toolbar?=null
     var ivStatus:ImageView?=null
@@ -29,28 +30,44 @@ class WeatherActivity : AppCompatActivity() {
     var tvDescription:TextView?=null
     var tvTempMin:TextView?=null
     var tvTempMax:TextView?=null
-
-    var unit:String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
         initViews()
         initToolbar()
         getExtras()
-        if(nameCity!=null){
-            getWeatherData(nameCity!!, unit!!)
-        }else{
-            getWeatherByLocation(lat!!, lon!!)
+
+        val builder= AlertDialog.Builder(this@WeatherActivity)
+        builder.setTitle("Unit")
+        val adaptadorDialogo= ArrayAdapter<String>(this@WeatherActivity, android.R.layout.simple_selectable_list_item)
+        builder.setPositiveButton("°C"){ dialogInterface, i ->
+            unit="&units=metric"
+            if(nameCity!=null){
+                getWeatherData(nameCity!!, unit!!)
+            }else{
+                getWeatherByLocation(lat!!, lon!!)
+            }
         }
+        builder.setNeutralButton("°F"){ dialogInterface, i ->
+            unit=""
+            if(nameCity!=null){
+                getWeatherData(nameCity!!, unit!!)
+            }else{
+                getWeatherByLocation(lat!!, lon!!)
+            }
+        }
+        builder.setNegativeButton("Cancel"){
+            dialog, which->
+            finish()
+            dialog.dismiss()
+        }
+        builder.setCancelable(false)
+        builder.show()
     }
     private fun getExtras() {
         nameCity=intent.getStringExtra("CITY")
         lon=intent.getStringExtra("LON")
         lat=intent.getStringExtra("LAT")
-        unit=intent.getStringExtra("UNIT")
-        if (unit!=null) unit="&units=$unit"
-        else unit=""
-
     }
 
     private fun initViews() {
@@ -73,22 +90,20 @@ class WeatherActivity : AppCompatActivity() {
     private fun getWeatherData(nameCity:String, unit:String){
         val openWeatherMap=openWeatherMap(this)
         openWeatherMap.getWeatherByName(nameCity, unit, object:weatherByNameInterface{
-            override fun getWeatherByName(result: openWeatherMapAPIName) {
+            override fun getWeatherByName(nameCity: String, urlImage: String, status: String, description: String, temperature: String, tempMin: String, tempMax: String) {
                 this@WeatherActivity.runOnUiThread {
-                    tvDescription?.text=result.weather?.get(0)?.description!!
-                    tvCity?.text=result.name
-                    val m=if (!unit.isNullOrEmpty())"°C" else "°F"
+                    tvDescription?.text = description
+                    tvCity?.text = nameCity
+                    val m = if (!unit.isNullOrEmpty()) "°C" else "°F"
 
-                    tvTemperature?.text="Temperature: ${result.main?.temp}$m"
-                    tvTempMax?.text="Temp max: ${result.main?.temp_max}$m"
-                    tvTempMin?.text="Temp min: ${result.main?.temp_min}$m"
+                    tvTemperature?.text = "Temperature: $temperature$m"
+                    tvTempMax?.text = "Temp max: $tempMax$m"
+                    tvTempMin?.text = "Temp min: $tempMin$m"
 
-                    tvStatus?.text=result.weather?.get(0)!!.main
-                    tvDescription?.text="Description: ${result.weather?.get(0)!!.description}"
-
-                    var urlImg:String="http://openweathermap.org/img/w/${result.weather?.get(0)!!.icon}.png"
-                    Log.d("IMAGE", urlImg)
-                    Glide.with(this@WeatherActivity).load(urlImg).into(ivStatus)
+                    tvStatus?.text = status
+                    tvDescription?.text = "Description: $description"
+                    Log.d("IMAGE", urlImage)
+                    Glide.with(this@WeatherActivity).load(urlImage).into(ivStatus)
                 }
             }
         })
@@ -99,10 +114,8 @@ class WeatherActivity : AppCompatActivity() {
             override fun getWeatherByLocation(result: openWeatherMapAPILocation) {
                 this@WeatherActivity.runOnUiThread {
                     if(result.list!=null){
-                        val sMetric=android.widget.Switch(this@WeatherActivity)
-                        sMetric.text="°F"
 
-                        val builder= AlertDialog.Builder(this@WeatherActivity).setView(sMetric)
+                        val builder= AlertDialog.Builder(this@WeatherActivity)
                         builder.setTitle("Select location")
                         val adaptadorDialogo= ArrayAdapter<String>(this@WeatherActivity, android.R.layout.simple_selectable_list_item)
                         for (nameLocation in result.list!!){
@@ -110,8 +123,7 @@ class WeatherActivity : AppCompatActivity() {
                         }
                         builder.setAdapter(adaptadorDialogo){
                             dialog, which->
-                            getWeatherData(result.list?.get(which)?.name!!,
-                                    if (sMetric.isChecked)"" else "&units=metric")
+                            getWeatherData(result.list?.get(which)?.name!!, unit!!)
                         }
                         builder.setNegativeButton("Cancel"){
                             dialog, which->
