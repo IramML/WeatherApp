@@ -2,6 +2,7 @@ package com.example.iram.weatherapp.OpenWeatherMap
 
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.example.iram.weatherapp.Interfaces.HttpResponse
 import com.example.iram.weatherapp.Interfaces.weatherByLocationInterface
 import com.example.iram.weatherapp.Interfaces.weatherByNameInterface
@@ -23,14 +24,19 @@ class openWeatherMap(var activity:AppCompatActivity){
             override fun httpResponseSuccess(response: String) {
                 var gson= Gson()
                 var objectResonse=gson.fromJson(response, openWeatherMapAPIName::class.java)
-                val nameCity=objectResonse.name!!
-                val urlImage=makeIconURL(objectResonse.weather?.get(0)?.icon!!)
-                val status=objectResonse.weather?.get(0)?.main!!
-                val description=objectResonse.weather?.get(0)?.description!!
-                val temperature=objectResonse.main?.temp!!
-                val tempMin=objectResonse.main?.temp_min!!
-                val tempMax=objectResonse.main?.temp_max!!
-                weatherByNameInterface.getWeatherByName(nameCity, urlImage, status, description, temperature, tempMin, tempMax)
+                if(!objectResonse.name.isNullOrEmpty()) {
+                    val nameCity = objectResonse.name!!
+                    val urlImage = makeIconURL(objectResonse.weather?.get(0)?.icon!!)
+                    val status = objectResonse.weather?.get(0)?.main!!
+                    val description = objectResonse.weather?.get(0)?.description!!
+                    val temperature = objectResonse.main?.temp!!
+                    val tempMin = objectResonse.main?.temp_min!!
+                    val tempMax = objectResonse.main?.temp_max!!
+                    weatherByNameInterface.getWeatherByName(nameCity, urlImage, status, description, temperature, tempMin, tempMax)
+                }else{
+                    Toast.makeText(activity.applicationContext, "Could not get Weather data", Toast.LENGTH_SHORT).show()
+                    activity.finish()
+                }
             }
         })
     }

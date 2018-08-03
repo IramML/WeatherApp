@@ -16,7 +16,7 @@ import com.example.iram.weatherapp.R
 import android.widget.*
 
 
-class WeatherActivity : AppCompatActivity() {
+class WeatherActivity : AppCompatActivity(){
     var nameCity:String?=null
     var lat:String?=null
     var lon:String?=null
@@ -133,8 +133,10 @@ class WeatherActivity : AppCompatActivity() {
                         builder.setCancelable(false)
                         builder.show()
                     }else{
-                        Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
-                        finish()
+                        this@WeatherActivity.runOnUiThread {
+                            Toast.makeText(applicationContext, "Weather no available", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     }
                 }
             }

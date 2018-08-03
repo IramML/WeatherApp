@@ -116,11 +116,5 @@
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
-    <!--
-    <fragment
-        android:id="@+id/fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.example.iram.weatherapp.Fragmets.ListFragment"/>
-        -->
+
 </LinearLayout>
