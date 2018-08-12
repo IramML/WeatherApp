@@ -4,6 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+    <string name="google_maps_api_key">AIzaSyAoNlMN2oky3HJINBP3boWqf-0zUrsShoA</string>
     <string-array name="nameCitiesMexico">
         <item>Durango, Durango</item>
         <item>Álvaro Obregón, Ciudad de México</item>
